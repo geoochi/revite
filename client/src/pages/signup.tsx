@@ -5,7 +5,7 @@ import { z } from 'zod'
 import { auth } from '../lib/api'
 import { useAuthStore } from '../lib/store'
 import { Button } from '../components/ui/button'
-import { useToast } from '../components/ui/use-toast'
+import { toast } from 'sonner'
 
 const registerSchema = z.object({
   name: z.string().min(2).optional(),
@@ -17,7 +17,6 @@ type RegisterForm = z.infer<typeof registerSchema>
 
 export default function Register() {
   const navigate = useNavigate()
-  const { toast } = useToast()
   const { setUser } = useAuthStore()
   const {
     register,
@@ -34,11 +33,7 @@ export default function Register() {
       setUser(response.user)
       navigate('/')
     } catch (error) {
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: 'Failed to register',
-      })
+      toast.error('Failed to register')
     }
   }
 

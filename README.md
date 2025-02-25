@@ -66,4 +66,3 @@ pnpm q
 ### 5. open website
 
 open http://localhost:3000/
-

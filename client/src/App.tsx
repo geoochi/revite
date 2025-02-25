@@ -1,16 +1,33 @@
 import { HashRouter, Routes, Route } from 'react-router-dom'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { Toaster } from './components/ui/toaster'
+import { Toaster } from 'sonner'
 import Layout from './components/layout'
 import Home from './pages/home'
 import Signin from './pages/signin'
 import Signup from './pages/signup'
-
-const queryClient = new QueryClient()
+import { useEffect } from 'react'
+import { useAuthStore } from './lib/store'
+import { auth } from './lib/api'
+import { User } from './types'
 
 function App() {
+  const { setUser } = useAuthStore()
+
+  useEffect(() => {
+    const token = localStorage.getItem('accessToken')
+    if (token) {
+      auth
+        .getMe()
+        .then((user: User) => {
+          setUser(user)
+        })
+        .catch(() => {
+          setUser(null)
+        })
+    }
+  }, [setUser])
+
   return (
-    <QueryClientProvider client={queryClient}>
+    <>
       <HashRouter>
         <Layout>
           <Routes>
@@ -21,7 +38,7 @@ function App() {
         </Layout>
       </HashRouter>
       <Toaster />
-    </QueryClientProvider>
+    </>
   )
 }
 

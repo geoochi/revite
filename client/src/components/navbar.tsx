@@ -3,13 +3,18 @@ import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../lib/store'
 import { auth } from '../lib/api'
 import { Button } from './ui/button'
-import { useToast } from './ui/use-toast'
+import { toast } from 'sonner'
 import { useTheme } from '@/hooks/useTheme'
-import { SunIcon, MoonIcon } from 'lucide-react'
+import { SunIcon, MoonIcon, LogOut } from 'lucide-react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu'
 
 export default function Navbar() {
   const navigate = useNavigate()
-  const { toast } = useToast()
   const { user, isAuthenticated, setUser } = useAuthStore()
   const { theme, setTheme } = useTheme()
 
@@ -17,44 +22,47 @@ export default function Navbar() {
     try {
       await auth.signout()
       setUser(null)
-      navigate('/signin')
+      navigate('/')
     } catch (error) {
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: 'Failed to sign out',
-      })
+      toast.error('Failed to sign out')
     }
   }
 
   return (
-    <div className='flex items-center justify-between p-8'>
-      <Link to='/' className='text-2xl font-bold'>
-        Revite
-      </Link>
+    <div className='flex justify-center'>
+      <div className='flex items-center justify-between p-8 w-[800px]'>
+        <Link to='/' className='text-2xl font-bold'>
+          Revite
+        </Link>
 
-      <div className='flex items-center gap-4'>
-        {isAuthenticated ? (
-          <>
-            <span>{user?.name || user?.email}</span>
-            <Button variant='outline' onClick={handleLogout}>
-              Sign out
-            </Button>
-          </>
-        ) : (
-          <>
-            <Button variant='outline'>
-              <Link to='/signin'>Sign in</Link>
-            </Button>
-          </>
-        )}
-        <Button
-          onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-          variant='outline'
-          size='icon'
-        >
-          {theme === 'light' ? <SunIcon /> : <MoonIcon />}
-        </Button>
+        <div className='flex items-center gap-4'>
+          {isAuthenticated ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant='outline'>{user?.name}</Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem>
+                  <LogOut />
+                  <span onClick={handleLogout}>Sign out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <>
+              <Button variant='outline'>
+                <Link to='/signin'>Sign in</Link>
+              </Button>
+            </>
+          )}
+          <Button
+            onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+            variant='outline'
+            size='icon'
+          >
+            {theme === 'light' ? <SunIcon /> : <MoonIcon />}
+          </Button>
+        </div>
       </div>
     </div>
   )
