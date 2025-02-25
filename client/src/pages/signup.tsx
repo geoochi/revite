@@ -38,7 +38,7 @@ export default function Register() {
   }
 
   return (
-    <div className='flex flex-col space-y-4 w-full max-w-sm px-4'>
+    <div className='flex flex-col space-y-4 w-full max-w-sm'>
       <h1 className='text-3xl font-bold'>Sign up</h1>
       <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
         <div className='space-y-2'>

@@ -30,7 +30,7 @@ export default function Navbar() {
 
   return (
     <div className='flex justify-center'>
-      <div className='flex items-center justify-between p-8 w-[800px]'>
+      <div className='flex items-center justify-between w-full max-w-[800px]'>
         <Link to='/' className='text-2xl font-bold'>
           Revite
         </Link>
