@@ -17,13 +17,21 @@ api.interceptors.request.use((config) => {
 
 export const auth = {
   signin: async (data: SigninInput): Promise<AuthResponse> => {
-    const response = await api.post('/api/auth/signin', data)
-    return response.data
+    try {
+      const response = await api.post('/api/auth/signin', data)
+      return response.data
+    } catch (error: any) {
+      throw error.response.data.error
+    }
   },
 
   signup: async (data: SignupInput): Promise<AuthResponse> => {
-    const response = await api.post('/api/auth/signup', data)
-    return response.data
+    try {
+      const response = await api.post('/api/auth/signup', data)
+      return response.data
+    } catch (error: any) {
+      throw error.response.data.error
+    }
   },
 
   signout: async (): Promise<void> => {

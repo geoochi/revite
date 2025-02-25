@@ -32,8 +32,8 @@ export default function Register() {
       localStorage.setItem('accessToken', response.accessToken)
       setUser(response.user)
       navigate('/')
-    } catch (error) {
-      toast.error('Failed to register')
+    } catch (error: any) {
+      toast.error(error)
     }
   }
 

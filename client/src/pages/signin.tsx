@@ -31,8 +31,8 @@ export default function Login() {
       localStorage.setItem('accessToken', response.accessToken)
       setUser(response.user)
       navigate('/')
-    } catch (error) {
-      toast.error('Invalid email or password')
+    } catch (error: any) {
+      toast.error(error)
     }
   }
 
