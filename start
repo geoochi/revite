@@ -3,10 +3,8 @@
 cd server
 if [ ! -f server.pid ];
 then
-    cd ../client
-    pnpm i && pnpm b
     cd ../server
     pnpm i
-    nohup pnpm ts-node src/index.ts > log/$(date +"%Y-%m-%d_%H-%M-%S").log 2>&1 & echo $! > server.pid
+    nohup pnpm ts-node-dev src/index.ts > log/$(date +"%Y-%m-%d_%H-%M-%S").log 2>&1 & echo $! > server.pid
     nohup pnpm prisma studio > /dev/null 2>&1 & echo $! > prisma.pid
 fi
