@@ -3,34 +3,34 @@ import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { z } from 'zod'
-import { LoginInput, RegisterInput } from '../types'
+import { SigninInput, SignupInput } from '../types'
 
-interface LoginRequest extends Request {
-  body: LoginInput
+interface SigninRequest extends Request {
+  body: SigninInput
 }
 
-interface RegisterRequest extends Request {
-  body: RegisterInput
+interface SignupRequest extends Request {
+  body: SignupInput
 }
 
 const router = Router()
 const prisma = new PrismaClient()
 
-const loginSchema = z.object({
+const signinSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
 })
 
-const registerSchema = z.object({
+const signupSchema = z.object({
   name: z.string().min(2).optional(),
   email: z.string().email(),
   password: z.string().min(6),
 })
 
-// Register
-router.post('/register', (async (req: RegisterRequest, res: Response) => {
+// Signup
+router.post('/signup', (async (req: SignupRequest, res: Response) => {
   try {
-    const data = registerSchema.parse(req.body)
+    const data = signupSchema.parse(req.body)
 
     // Check if user exists
     const existingUser = await prisma.user.findUnique({
@@ -93,10 +93,10 @@ router.post('/register', (async (req: RegisterRequest, res: Response) => {
   }
 }) as RequestHandler)
 
-// Login
-router.post('/login', (async (req: LoginRequest, res: Response) => {
+// Signin
+router.post('/signin', (async (req: SigninRequest, res: Response) => {
   try {
-    const data = loginSchema.parse(req.body)
+    const data = signinSchema.parse(req.body)
 
     // Find user
     const user = await prisma.user.findUnique({
@@ -157,8 +157,8 @@ router.post('/login', (async (req: LoginRequest, res: Response) => {
   }
 }) as RequestHandler)
 
-// Logout
-router.post('/logout', (async (req: Request, res: Response) => {
+// Signout
+router.post('/signout', (async (req: Request, res: Response) => {
   try {
     const token = req.headers.authorization?.split(' ')[1]
     if (!token) {

@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { AuthResponse, LoginInput, RegisterInput, User } from '../types'
+import { AuthResponse, SigninInput, SignupInput, User } from '../types'
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -16,18 +16,18 @@ api.interceptors.request.use((config) => {
 })
 
 export const auth = {
-  login: async (data: LoginInput): Promise<AuthResponse> => {
-    const response = await api.post('/api/auth/login', data)
+  signin: async (data: SigninInput): Promise<AuthResponse> => {
+    const response = await api.post('/api/auth/signin', data)
     return response.data
   },
 
-  register: async (data: RegisterInput): Promise<AuthResponse> => {
-    const response = await api.post('/api/auth/register', data)
+  signup: async (data: SignupInput): Promise<AuthResponse> => {
+    const response = await api.post('/api/auth/signup', data)
     return response.data
   },
 
-  logout: async (): Promise<void> => {
-    await api.post('/api/auth/logout')
+  signout: async (): Promise<void> => {
+    await api.post('/api/auth/signout')
     localStorage.removeItem('accessToken')
   },
 

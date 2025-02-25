@@ -29,7 +29,7 @@ export default function Register() {
 
   const onSubmit = async (data: RegisterForm) => {
     try {
-      const response = await auth.register(data)
+      const response = await auth.signup(data)
       localStorage.setItem('accessToken', response.accessToken)
       setUser(response.user)
       navigate('/')
@@ -44,7 +44,7 @@ export default function Register() {
 
   return (
     <div className='flex flex-col space-y-4 w-full max-w-sm px-4'>
-      <h1 className='text-3xl font-bold'>Register</h1>
+      <h1 className='text-3xl font-bold'>Sign up</h1>
       <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
         <div className='space-y-2'>
           <label htmlFor='name'>Name</label>
@@ -84,7 +84,7 @@ export default function Register() {
           )}
         </div>
         <Button type='submit' className='w-full' disabled={isSubmitting}>
-          {isSubmitting ? 'Loading...' : 'Register'}
+          {isSubmitting ? 'Loading...' : 'Sign up'}
         </Button>
       </form>
     </div>

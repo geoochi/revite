@@ -1,13 +1,13 @@
 import { useAuthStore } from '../lib/store'
-import { useNavigate } from 'react-router-dom'
-import { useEffect } from 'react'
+// import { useNavigate } from 'react-router-dom'
+// import { useEffect } from 'react'
 
 export default function Home() {
   const { user, isAuthenticated } = useAuthStore()
-  const navigate = useNavigate()
-  useEffect(() => {
-    if (!isAuthenticated) navigate('/login')
-  }, [])
+  // const navigate = useNavigate()
+  // useEffect(() => {
+  //   if (!isAuthenticated) navigate('/signin')
+  // }, [])
 
   return (
     <div className='space-y-6'>
@@ -19,7 +19,7 @@ export default function Home() {
           </p>
         ) : (
           <p className='text-gray-500 dark:text-gray-400'>
-            Please login to continue.
+            Please sign in to continue.
           </p>
         )}
       </div>

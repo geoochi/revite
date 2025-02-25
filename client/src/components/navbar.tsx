@@ -4,22 +4,25 @@ import { useAuthStore } from '../lib/store'
 import { auth } from '../lib/api'
 import { Button } from './ui/button'
 import { useToast } from './ui/use-toast'
+import { useTheme } from '@/hooks/useTheme'
+import { SunIcon, MoonIcon } from 'lucide-react'
 
 export default function Navbar() {
   const navigate = useNavigate()
   const { toast } = useToast()
   const { user, isAuthenticated, setUser } = useAuthStore()
+  const { theme, setTheme } = useTheme()
 
   const handleLogout = async () => {
     try {
-      await auth.logout()
+      await auth.signout()
       setUser(null)
-      navigate('/login')
+      navigate('/signin')
     } catch (error) {
       toast({
         variant: 'destructive',
         title: 'Error',
-        description: 'Failed to logout',
+        description: 'Failed to sign out',
       })
     }
   }
@@ -33,21 +36,25 @@ export default function Navbar() {
       <div className='flex items-center gap-4'>
         {isAuthenticated ? (
           <>
-            <span>Welcome, {user?.name || user?.email}</span>
+            <span>{user?.name || user?.email}</span>
             <Button variant='outline' onClick={handleLogout}>
-              Logout
+              Sign out
             </Button>
           </>
         ) : (
           <>
-            <Button variant='ghost' asChild>
-              <Link to='/login'>Login</Link>
-            </Button>
-            <Button asChild>
-              <Link to='/register'>Register</Link>
+            <Button variant='outline'>
+              <Link to='/signin'>Sign in</Link>
             </Button>
           </>
         )}
+        <Button
+          onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+          variant='outline'
+          size='icon'
+        >
+          {theme === 'light' ? <SunIcon /> : <MoonIcon />}
+        </Button>
       </div>
     </div>
   )

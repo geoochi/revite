@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -28,7 +28,7 @@ export default function Login() {
 
   const onSubmit = async (data: LoginForm) => {
     try {
-      const response = await auth.login(data)
+      const response = await auth.signin(data)
       localStorage.setItem('accessToken', response.accessToken)
       setUser(response.user)
       navigate('/')
@@ -43,7 +43,7 @@ export default function Login() {
 
   return (
     <div className='flex flex-col space-y-4 w-full max-w-sm px-4'>
-      <h1 className='text-3xl font-bold'>Login</h1>
+      <h1 className='text-3xl font-bold'>Sign in</h1>
       <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
         <div className='space-y-2'>
           <label htmlFor='email'>Email</label>
@@ -70,8 +70,14 @@ export default function Login() {
             <p className='text-sm text-red-500'>{errors.password.message}</p>
           )}
         </div>
+        <p className='text-sm text-gray-500'>
+          Don't have an account yet?{' '}
+          <Link to='/signup' className='underline'>
+            Sign up
+          </Link>
+        </p>
         <Button type='submit' className='w-full' disabled={isSubmitting}>
-          {isSubmitting ? 'Loading...' : 'Login'}
+          {isSubmitting ? 'Loading...' : 'Sign in'}
         </Button>
       </form>
     </div>

@@ -1,30 +1,27 @@
 import { HashRouter, Routes, Route } from 'react-router-dom'
-// import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ThemeProvider } from './components/theme-provider'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Toaster } from './components/ui/toaster'
 import Layout from './components/layout'
 import Home from './pages/home'
-import Login from './pages/login'
-import Register from './pages/register'
+import Signin from './pages/signin'
+import Signup from './pages/signup'
 
-// const queryClient = new QueryClient()
+const queryClient = new QueryClient()
 
 function App() {
   return (
-    // <QueryClientProvider client={queryClient}>
-    <ThemeProvider defaultTheme='system' storageKey='vite-ui-theme'>
+    <QueryClientProvider client={queryClient}>
       <HashRouter>
         <Layout>
           <Routes>
             <Route path='/' element={<Home />} />
-            <Route path='/login' element={<Login />} />
-            <Route path='/register' element={<Register />} />
+            <Route path='/signin' element={<Signin />} />
+            <Route path='/signup' element={<Signup />} />
           </Routes>
         </Layout>
       </HashRouter>
       <Toaster />
-    </ThemeProvider>
-    // </QueryClientProvider>
+    </QueryClientProvider>
   )
 }
 

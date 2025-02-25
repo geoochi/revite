@@ -25,11 +25,11 @@ export interface AuthResponse {
   accessToken: string
 }
 
-export interface LoginInput {
+export interface SigninInput {
   email: string
   password: string
 }
 
-export interface RegisterInput extends LoginInput {
+export interface SignupInput extends SigninInput {
   name?: string
 }

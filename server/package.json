@@ -4,7 +4,7 @@
     "d": "ts-node-dev --respawn src/index.ts",
     "b": "tsc",
     "p": "node dist/index.js",
-    "db": "prisma studio"
+    "q": "prisma studio"
   },
   "dependencies": {
     "@prisma/client": "^6.4.1",
