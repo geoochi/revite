@@ -1,5 +1,14 @@
 import { create } from 'zustand'
-import { User } from '../types'
+
+interface User {
+  id: string
+  email: string
+  name?: string
+  emailVerified: boolean
+  image?: string
+  createdAt: string
+  updatedAt: string
+}
 
 interface AuthState {
   user: User | null

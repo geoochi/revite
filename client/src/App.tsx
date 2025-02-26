@@ -1,29 +1,26 @@
 import { HashRouter, Routes, Route } from 'react-router-dom'
 import { Toaster } from 'sonner'
-import Layout from './components/layout'
-import Home from './pages/home'
-import Signin from './pages/signin'
-import Signup from './pages/signup'
 import { useEffect } from 'react'
-import { useAuthStore } from './lib/store'
-import { auth } from './lib/api'
-import { User } from './types'
+import Layout from '@/components/layout'
+import Home from '@/pages/home'
+import Signin from '@/pages/signin'
+import Signup from '@/pages/signup'
+import { useAuthStore } from '@/lib/store'
+import api from '@/lib/api'
 
 function App() {
   const { setUser } = useAuthStore()
 
   useEffect(() => {
-    const token = localStorage.getItem('accessToken')
-    if (token) {
-      auth
-        .getMe()
-        .then((user: User) => {
-          setUser(user)
-        })
-        .catch(() => {
-          setUser(null)
-        })
+    const fetchUser = async () => {
+      try {
+        const response = await api.get('/api/auth/me')
+        setUser(response.data)
+      } catch (error) {
+        setUser(null)
+      }
     }
+    fetchUser()
   }, [setUser])
 
   return (

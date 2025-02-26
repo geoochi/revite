@@ -1,11 +1,11 @@
 import { useNavigate, Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { auth } from '../lib/api'
-import { useAuthStore } from '../lib/store'
-import { Button } from '../components/ui/button'
 import { toast } from 'sonner'
+import { zodResolver } from '@hookform/resolvers/zod'
+import api from '@/lib/api'
+import { useAuthStore } from '@/lib/store'
+import { Button } from '@/components/ui/button'
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -27,12 +27,12 @@ export default function Login() {
 
   const onSubmit = async (data: LoginForm) => {
     try {
-      const response = await auth.signin(data)
-      localStorage.setItem('accessToken', response.accessToken)
-      setUser(response.user)
+      const response = await api.post('/api/auth/signin', data)
+      localStorage.setItem('accessToken', response.data.accessToken)
+      setUser(response.data.user)
       navigate('/')
     } catch (error: any) {
-      toast.error(error)
+      toast.error(error.response.data.error)
     }
   }
 

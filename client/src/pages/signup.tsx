@@ -1,11 +1,12 @@
 import { useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { auth } from '../lib/api'
-import { useAuthStore } from '../lib/store'
-import { Button } from '../components/ui/button'
 import { toast } from 'sonner'
+import { zodResolver } from '@hookform/resolvers/zod'
+import api from '@/lib/api'
+import { useAuthStore } from '@/lib/store'
+import { Button } from '@/components/ui/button'
 
 const registerSchema = z.object({
   name: z.string().min(2).optional(),
@@ -28,12 +29,12 @@ export default function Register() {
 
   const onSubmit = async (data: RegisterForm) => {
     try {
-      const response = await auth.signup(data)
-      localStorage.setItem('accessToken', response.accessToken)
-      setUser(response.user)
+      const response = await api.post('/api/auth/signup', data)
+      localStorage.setItem('accessToken', response.data.accessToken)
+      setUser(response.data.user)
       navigate('/')
     } catch (error: any) {
-      toast.error(error)
+      toast.error(error.response.data.error)
     }
   }
 
@@ -60,7 +61,7 @@ export default function Register() {
             id='email'
             type='email'
             className='w-full rounded-md border p-2'
-            placeholder='m@example.com'
+            placeholder='me@example.com'
           />
           {errors.email && (
             <p className='text-sm text-red-500'>{errors.email.message}</p>
@@ -78,6 +79,12 @@ export default function Register() {
             <p className='text-sm text-red-500'>{errors.password.message}</p>
           )}
         </div>
+        <p className='text-sm text-gray-500'>
+          Already have an account?{' '}
+          <Link to='/signin' className='underline'>
+            Sign in
+          </Link>
+        </p>
         <Button type='submit' className='w-full' disabled={isSubmitting}>
           {isSubmitting ? 'Loading...' : 'Sign up'}
         </Button>

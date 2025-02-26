@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
-import { useAuthStore } from '../lib/store'
-import { auth } from '../lib/api'
-import { Button } from './ui/button'
 import { toast } from 'sonner'
-import { useTheme } from '@/hooks/useTheme'
 import { SunIcon, MoonIcon, LogOut } from 'lucide-react'
+import { useAuthStore } from '@/lib/store'
+import api from '@/lib/api'
+import { useTheme } from '@/hooks/use-theme'
+import { Button } from './ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,11 +20,12 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     try {
-      await auth.signout()
+      await api.post('/api/auth/signout')
+      localStorage.removeItem('accessToken')
       setUser(null)
       navigate('/')
-    } catch (error) {
-      toast.error('Failed to sign out')
+    } catch (error: any) {
+      toast.error(error.response.data.error)
     }
   }
 
@@ -51,7 +52,7 @@ export default function Navbar() {
           ) : (
             <>
               <Button variant='outline'>
-                <Link to='/signin'>Sign in</Link>
+                <Link to='/signup'>Sign up</Link>
               </Button>
             </>
           )}
