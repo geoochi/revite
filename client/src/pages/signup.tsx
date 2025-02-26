@@ -5,7 +5,7 @@ import { z } from 'zod'
 import { toast } from 'sonner'
 import { zodResolver } from '@hookform/resolvers/zod'
 import api from '@/lib/api'
-import { useAuthStore } from '@/lib/store'
+import useAuthStore from '@/lib/store'
 import { Button } from '@/components/ui/button'
 
 const registerSchema = z.object({
@@ -16,7 +16,7 @@ const registerSchema = z.object({
 
 type RegisterForm = z.infer<typeof registerSchema>
 
-export default function Register() {
+const Signup: React.FC = () => {
   const navigate = useNavigate()
   const { setUser } = useAuthStore()
   const {
@@ -92,3 +92,5 @@ export default function Register() {
     </div>
   )
 }
+
+export default Signup

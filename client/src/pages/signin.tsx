@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { toast } from 'sonner'
 import { zodResolver } from '@hookform/resolvers/zod'
 import api from '@/lib/api'
-import { useAuthStore } from '@/lib/store'
+import useAuthStore from '@/lib/store'
 import { Button } from '@/components/ui/button'
 
 const loginSchema = z.object({
@@ -14,7 +14,7 @@ const loginSchema = z.object({
 
 type LoginForm = z.infer<typeof loginSchema>
 
-export default function Login() {
+const Signin: React.FC = () => {
   const navigate = useNavigate()
   const { setUser } = useAuthStore()
   const {
@@ -78,3 +78,5 @@ export default function Login() {
     </div>
   )
 }
+
+export default Signin

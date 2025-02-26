@@ -5,10 +5,10 @@ import Layout from '@/components/layout'
 import Home from '@/pages/home'
 import Signin from '@/pages/signin'
 import Signup from '@/pages/signup'
-import { useAuthStore } from '@/lib/store'
+import useAuthStore from '@/lib/store'
 import api from '@/lib/api'
 
-function App() {
+const App: React.FC = () => {
   const { setUser } = useAuthStore()
 
   useEffect(() => {

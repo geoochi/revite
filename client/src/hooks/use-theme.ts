@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 
 type Theme = 'light' | 'dark'
 
-export function useTheme() {
+function useTheme() {
   const [theme, setTheme] = useState<Theme>(() => {
     // 首先检查 localStorage
     const savedTheme = localStorage.getItem('theme') as Theme
@@ -41,3 +41,5 @@ export function useTheme() {
     setTheme,
   }
 }
+
+export default useTheme

@@ -1,7 +1,7 @@
-import { useAuthStore } from '@/lib/store'
+import useAuthStore from '@/lib/store'
 import { Link } from 'react-router-dom'
 
-export default function Home() {
+const Home: React.FC = () => {
   const { user, isAuthenticated } = useAuthStore()
   return (
     <div className='space-y-6 text-center'>
@@ -21,3 +21,5 @@ export default function Home() {
     </div>
   )
 }
+
+export default Home

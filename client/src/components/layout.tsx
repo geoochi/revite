@@ -1,6 +1,6 @@
 import Navbar from './navbar'
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <div className='min-h-screen flex flex-col p-8'>
       <Navbar />
@@ -10,3 +10,5 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     </div>
   )
 }
+
+export default Layout

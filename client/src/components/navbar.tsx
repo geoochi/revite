@@ -2,9 +2,9 @@ import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { SunIcon, MoonIcon, LogOut } from 'lucide-react'
-import { useAuthStore } from '@/lib/store'
+import useAuthStore from '@/lib/store'
 import api from '@/lib/api'
-import { useTheme } from '@/hooks/use-theme'
+import useTheme from '@/hooks/use-theme'
 import { Button } from './ui/button'
 import {
   DropdownMenu,
@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu'
 
-export default function Navbar() {
+const Navbar: React.FC = () => {
   const navigate = useNavigate()
   const { user, isAuthenticated, setUser } = useAuthStore()
   const { theme, setTheme } = useTheme()
@@ -68,3 +68,5 @@ export default function Navbar() {
     </div>
   )
 }
+
+export default Navbar
