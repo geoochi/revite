@@ -6,4 +6,6 @@ then
     rm server.pid
     kill $(cat prisma.pid)
     rm prisma.pid
+else
+    echo "Server is not running"
 fi

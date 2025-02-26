@@ -1,8 +1,8 @@
 {
   "packageManager": "pnpm@10.4.1",
   "scripts": {
-    "d": "ts-node-dev src/index.ts",
-    "d-prod": "cross-env NODE_ENV=production ts-node-dev src/index.ts",
+    "d": "ts-node-dev src/revite-server.ts",
+    "d-prod": "cross-env NODE_ENV=production ts-node-dev src/revite-server.ts",
     "q": "prisma studio"
   },
   "dependencies": {
