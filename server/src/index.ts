@@ -1,21 +1,28 @@
 import express from 'express'
 import cors from 'cors'
+import authRoutes from './auth'
 import dotenv from 'dotenv'
-import authRoutes from './routes/auth'
 
 dotenv.config()
+
+// console.log('NODE_ENV:', process.env.NODE_ENV)
+// console.log('CLIENT_URL:', process.env.CLIENT_URL)
+// console.log('PROD_CLIENT_URL:', process.env.PROD_CLIENT_URL)
 
 const app = express()
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin:
+      process.env.NODE_ENV === 'production'
+        ? process.env.PROD_CLIENT_URL
+        : process.env.CLIENT_URL,
     credentials: true,
   })
 )
+
 app.use(express.json())
 
-// Routes
 app.use('/api/auth', authRoutes)
 
 const PORT = process.env.PORT || 5000

@@ -3,7 +3,15 @@ import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { z } from 'zod'
-import { SigninInput, SignupInput } from '../types'
+
+interface SigninInput {
+  email: string
+  password: string
+}
+
+interface SignupInput extends SigninInput {
+  name?: string
+}
 
 interface SigninRequest extends Request {
   body: SigninInput

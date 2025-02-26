@@ -1,0 +1,8 @@
+#! /bin/sh
+
+if [ ! -f server.pid ];
+then
+    pnpm i
+    nohup pnpm cross-env NODE_ENV=production ts-node-dev src/index.ts > log/$(date +"%Y-%m-%d_%H-%M-%S").log 2>&1 & echo $! > server.pid
+    nohup pnpm prisma studio > /dev/null 2>&1 & echo $! > prisma.pid
+fi

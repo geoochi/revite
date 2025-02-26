@@ -1,6 +1,5 @@
 #! /bin/sh
 
-cd server
 if [ -f server.pid ];
 then
     kill $(cat server.pid)
