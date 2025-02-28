@@ -1,11 +1,15 @@
 #! /bin/sh
 
-if [ -f server.pid ];
+if [ ! -z $(ps x | grep 'wrap.js src/revite-server.ts' | grep -v grep | awk '{print $1}') ];
 then
-    kill $(cat server.pid)
-    rm server.pid
-    kill $(cat prisma.pid)
-    rm prisma.pid
+    pkill -9 -f 'wrap.js src/revite-server.ts'
 else
     echo "Server is not running"
+fi
+
+if [ ! -z $(ps x | grep 'index.js studio --port 5556' | grep -v grep | awk '{print $1}') ];
+then
+    pkill -9 -f 'index.js studio --port 5556'
+else
+    echo "Studio is not running"
 fi

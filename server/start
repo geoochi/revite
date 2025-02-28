@@ -1,10 +1,15 @@
 #! /bin/sh
 
-if [ ! -f server.pid ];
+if [ -z $(ps x | grep 'wrap.js src/revite-server.ts' | grep -v grep | awk '{print $1}') ];
 then
-    pnpm i
-    nohup pnpm cross-env NODE_ENV=production ts-node-dev src/revite-server.ts > log/$(date +"%Y-%m-%d_%H-%M-%S").log 2>&1 & echo $! > server.pid
-    nohup pnpm prisma studio > /dev/null 2>&1 & echo $! > prisma.pid
+    nohup pnpm cross-env NODE_ENV=production ts-node-dev src/revite-server.ts > log/$(date +"%Y-%m-%d_%H-%M-%S").log 2>&1 &
 else
     echo "Server is already running"
+fi
+
+if [ -z $(ps x | grep 'index.js studio --port 5556' | grep -v grep | awk '{print $1}') ];
+then
+    nohup pnpm prisma studio --port 5556 > /dev/null 2>&1 &
+else
+    echo "Studio is already running"
 fi
