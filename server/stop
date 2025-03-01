@@ -1,15 +1,9 @@
 #! /bin/sh
 
-if [ ! -z $(ps x | grep 'wrap.js src/revite-server.ts' | grep -v grep | awk '{print $1}') ];
+PROCESS_ID=$(ps x | grep 'node dist/revite-server.js' | grep -v grep | awk '{print $1}')
+if [ ! -z "$PROCESS_ID" ];
 then
-    pkill -9 -f 'wrap.js src/revite-server.ts'
+    pkill -9 -f 'node dist/revite-server.js'
 else
     echo "Server is not running"
-fi
-
-if [ ! -z $(ps x | grep 'index.js studio --port 5556' | grep -v grep | awk '{print $1}') ];
-then
-    pkill -9 -f 'index.js studio --port 5556'
-else
-    echo "Studio is not running"
 fi
