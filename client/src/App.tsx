@@ -5,6 +5,7 @@ import Layout from '@/components/layout'
 import Home from '@/pages/home'
 import Signin from '@/pages/signin'
 import Signup from '@/pages/signup'
+import NotFound from '@/pages/not-found'
 import useAuthStore from '@/lib/store'
 import api from '@/lib/api'
 
@@ -29,6 +30,7 @@ const App: React.FC = () => {
         <Layout>
           <Routes>
             <Route path='/' element={<Home />} />
+            <Route path='*' element={<NotFound />} />
             <Route path='/signin' element={<Signin />} />
             <Route path='/signup' element={<Signup />} />
           </Routes>

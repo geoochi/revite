@@ -16,14 +16,6 @@ function useTheme() {
   })
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-
-    const handleChange = (e: MediaQueryListEvent) => {
-      setTheme(e.matches ? 'dark' : 'light')
-    }
-
-    mediaQuery.addEventListener('change', handleChange)
-
     // 保存主题到 localStorage
     localStorage.setItem('theme', theme)
 
@@ -32,8 +24,6 @@ function useTheme() {
     } else {
       document.documentElement.classList.remove('dark')
     }
-
-    return () => mediaQuery.removeEventListener('change', handleChange)
   }, [theme])
 
   return {

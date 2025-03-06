@@ -97,7 +97,7 @@ router.post('/signup', (async (req: SignupRequest, res: Response) => {
     res.json({ user, session, accessToken })
   } catch (error) {
     console.error(error)
-    res.status(400).json({ error: 'Invalid input' })
+    res.status(400).json({ error: error })
   }
 }) as RequestHandler)
 
@@ -117,7 +117,7 @@ router.post('/signin', (async (req: SigninRequest, res: Response) => {
     })
 
     if (!user || !user.accounts[0]) {
-      return res.status(400).json({ error: 'Invalid credentials' })
+      return res.status(400).json({ error: 'Invalid user' })
     }
 
     // Check password
@@ -127,7 +127,7 @@ router.post('/signin', (async (req: SigninRequest, res: Response) => {
     )
 
     if (!isValid) {
-      return res.status(400).json({ error: 'Invalid credentials' })
+      return res.status(400).json({ error: 'Invalid password' })
     }
 
     // Create session
@@ -161,7 +161,7 @@ router.post('/signin', (async (req: SigninRequest, res: Response) => {
     })
   } catch (error) {
     console.error(error)
-    res.status(400).json({ error: 'Invalid input' })
+    res.status(400).json({ error: error })
   }
 }) as RequestHandler)
 
@@ -212,7 +212,7 @@ router.get('/me', (async (req: Request, res: Response) => {
     res.json(user)
   } catch (error) {
     console.error(error)
-    res.status(401).json({ error: 'Unauthorized' })
+    res.status(401).json({ error: error })
   }
 }) as RequestHandler)
 
