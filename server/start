@@ -3,7 +3,6 @@
 PROCESS_ID=$(ps x | grep 'node dist/revite-server.js' | grep -v grep | awk '{print $1}')
 if [ -z "$PROCESS_ID" ];
 then
-    pnpm b
     nohup pnpm cross-env NODE_ENV=production node dist/revite-server.js > log/$(date +"%Y-%m-%d_%H-%M-%S").log 2>&1 &
 else
     echo "Server is already running"
