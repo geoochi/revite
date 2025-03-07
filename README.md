@@ -1,16 +1,17 @@
 # Revite
 
-A fullstack website build with react, vite, tailwindcss, shadcn, lucide icon, prisma, sqlite
+A fullstack website build with vike
 
 ## Features
 
 - react
-- vite
+- vike
 - tailwindcss
 - shadcn
 - lucide icon
 - prisma
 - sqlite
+- auth
 
 ## How to use
 
@@ -25,17 +26,18 @@ cd revite
 
 ```sh
 cd client
-pnpm install
+bun i
 cp .env.example .env
 # set your own environment variables
 ```
 
 ```sh
 cd ../server
-pnpm install
+bun i
 cp .env.example .env
 # set your own environment variables
-pnpm prisma db push
+bun prisma db push
+bun prisma generate
 ```
 
 ### 3. run dev server
@@ -44,14 +46,14 @@ terminal 1
 
 ```sh
 cd ../client
-pnpm d
+bun d
 ```
 
 terminal 2
 
 ```sh
 cd ../server
-pnpm d
+bun d
 ```
 
 ### 4. run prisma studio (optional)
@@ -60,7 +62,7 @@ terminal 3
 
 ```sh
 cd ../server
-pnpm q
+bun q
 ```
 
 ### 5. open website
