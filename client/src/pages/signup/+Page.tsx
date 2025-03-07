@@ -1,5 +1,3 @@
-import { useNavigate } from 'react-router-dom'
-import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { toast } from 'sonner'
@@ -7,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import api from '@/lib/api'
 import useAuthStore from '@/lib/store'
 import { Button } from '@/components/ui/button'
+import { navigate } from 'vike/client/router'
 
 const registerSchema = z.object({
   name: z.string().min(2).optional(),
@@ -16,8 +15,7 @@ const registerSchema = z.object({
 
 type RegisterForm = z.infer<typeof registerSchema>
 
-const Signup: React.FC = () => {
-  const navigate = useNavigate()
+const Page: React.FC = () => {
   const { setUser } = useAuthStore()
   const {
     register,
@@ -81,9 +79,9 @@ const Signup: React.FC = () => {
         </div>
         <p className='text-sm text-gray-500'>
           Already have an account?{' '}
-          <Link to='/signin' className='underline'>
+          <a href='/signin' className='underline'>
             Sign in
-          </Link>
+          </a>
         </p>
         <Button type='submit' className='w-full' disabled={isSubmitting}>
           {isSubmitting ? 'Loading...' : 'Sign up'}
@@ -93,4 +91,4 @@ const Signup: React.FC = () => {
   )
 }
 
-export default Signup
+export default Page
