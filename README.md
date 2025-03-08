@@ -26,18 +26,18 @@ cd revite
 
 ```sh
 cd client
-bun i
+pnpm i
 cp .env.example .env
 # set your own environment variables
 ```
 
 ```sh
 cd ../server
-bun i
+pnpm i
 cp .env.example .env
 # set your own environment variables
-bun prisma db push
-bun prisma generate
+pnpm prisma db push
+pnpm prisma generate
 ```
 
 ### 3. run dev server
@@ -46,14 +46,14 @@ terminal 1
 
 ```sh
 cd ../client
-bun d
+pnpm d
 ```
 
 terminal 2
 
 ```sh
 cd ../server
-bun d
+pnpm d
 ```
 
 ### 4. run prisma studio (optional)
@@ -62,7 +62,7 @@ terminal 3
 
 ```sh
 cd ../server
-bun q
+pnpm q
 ```
 
 ### 5. open website
