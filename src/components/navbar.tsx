@@ -26,7 +26,7 @@ const Navbar: React.FC = () => {
     <div className='flex justify-center'>
       <div className='flex items-center justify-between w-full max-w-[800px]'>
         <a href='/' className='text-2xl font-bold'>
-          Revite
+          Revike
         </a>
 
         <div className='flex items-center gap-4'>

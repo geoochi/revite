@@ -8,7 +8,7 @@ const Page: React.FC = () => {
         <p>Hello, {user?.name || user?.email} !</p>
       ) : (
         <>
-          <h1 className='text-3xl font-bold'>Welcome to Revite</h1>
+          <h1 className='text-3xl font-bold'>Welcome to Revike</h1>
           <hr />
           <p className='text-gray-500 dark:text-gray-400'>
             Please{' '}

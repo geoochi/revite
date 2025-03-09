@@ -1,4 +1,4 @@
-# Revite
+# Revike
 
 A fullstack SSG/SSR website build with vike
 
@@ -18,8 +18,8 @@ A fullstack SSG/SSR website build with vike
 ### 1. initiate
 
 ```bash
-git clone https://github.com/geoochi/revite.git
-cd revite
+git clone https://github.com/geoochi/revike.git
+cd revike
 pnpm install && pnpm approve-builds
 ```
 

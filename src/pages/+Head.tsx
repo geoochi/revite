@@ -1,7 +1,7 @@
 export const Head: React.FC = () => {
   return (
     <>
-      <title>Revite</title>
+      <title>Revike</title>
       <script
         dangerouslySetInnerHTML={{
           __html: `
