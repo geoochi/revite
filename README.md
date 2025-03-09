@@ -1,11 +1,11 @@
 # Revite
 
-A fullstack website build with vike
+A fullstack SSG/SSR website build with vike
 
 ## Features
 
 - react
-- vike
+- vike SSG/SSR
 - tailwindcss
 - shadcn
 - lucide icon
@@ -17,54 +17,67 @@ A fullstack website build with vike
 
 ### 1. initiate
 
-```sh
+```bash
 git clone https://github.com/geoochi/revite.git
 cd revite
+pnpm install && pnpm approve-builds
 ```
 
-### 2. install dependencies and set environment variables
+### 2. initiate db
 
-```sh
-cd client
-pnpm i
+```bash
 cp .env.example .env
-# set your own environment variables
+# edit .env
 ```
 
-```sh
-cd ../server
-pnpm i
-cp .env.example .env
-# set your own environment variables
-pnpm prisma db push
-pnpm prisma generate
+```bash
+pnpm init:db
 ```
 
-### 3. run dev server
+### 3. development
 
-terminal 1
-
-```sh
-cd ../client
+```bash
 pnpm d
 ```
 
-terminal 2
+### 4. build
 
-```sh
-cd ../server
-pnpm d
+```bash
+pnpm b
 ```
 
-### 4. run prisma studio (optional)
+### 5. production(SSG, no server & db)
 
-terminal 3
+```bash
+pnpm p
+```
 
-```sh
-cd ../server
+### 6. production(SSR, with server & db)
+
+```bash
+pnpm start
+```
+
+### 7. db monitor(optional)
+
+```bash
 pnpm q
 ```
 
-### 5. open website
+### 8. remote deploy
 
-open http://localhost:3000/
+```bash
+chmod +x start stop && pnpm b
+```
+
+start server:
+
+```bash
+./start
+```
+
+stop server:
+
+```bash
+./stop
+```
