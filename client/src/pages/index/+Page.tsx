@@ -1,7 +1,6 @@
 import useAuthStore from '@/lib/store'
-import { Link } from 'react-router-dom'
 
-const Home: React.FC = () => {
+const Page: React.FC = () => {
   const { user, isAuthenticated } = useAuthStore()
   return (
     <div className='space-y-6 text-center'>
@@ -13,9 +12,9 @@ const Home: React.FC = () => {
           <hr />
           <p className='text-gray-500 dark:text-gray-400'>
             Please{' '}
-            <Link to='/signin' className='underline'>
+            <a href='/signin' className='underline'>
               sign in
-            </Link>{' '}
+            </a>{' '}
             to continue.
           </p>
         </>
@@ -24,4 +23,4 @@ const Home: React.FC = () => {
   )
 }
 
-export default Home
+export default Page

@@ -1,10 +1,11 @@
 {
   "type": "module",
-  "packageManager": "pnpm@10.4.1",
+  "packageManager": "pnpm@10.6.2",
   "scripts": {
-    "d": "vite",
-    "b": "vite build",
-    "p": "pnpx http-server dist -a 127.0.0.1 -p 3000"
+    "d": "vike dev",
+    "b": "vike build",
+    "b:remote": "BUILD_ENV=remote vike build",
+    "p": "pnpx http-server dist/client -a 127.0.0.1 -p 5173"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.3",
@@ -22,6 +23,8 @@
     "sonner": "^2.0.1",
     "tailwind-merge": "^3.0.2",
     "tailwindcss-animate": "^1.0.7",
+    "vike": "^0.4.224",
+    "vike-react": "^0.5.13",
     "zod": "^3.24.2",
     "zustand": "^5.0.3"
   },

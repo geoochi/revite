@@ -1,6 +1,5 @@
-import { Link } from 'react-router-dom'
-import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
+import { navigate } from 'vike/client/router'
 import { SunIcon, MoonIcon, LogOut } from 'lucide-react'
 import useAuthStore from '@/lib/store'
 import api from '@/lib/api'
@@ -14,7 +13,6 @@ import {
 } from './ui/dropdown-menu'
 
 const Navbar: React.FC = () => {
-  const navigate = useNavigate()
   const { user, isAuthenticated, setUser } = useAuthStore()
   const { theme, setTheme } = useTheme()
 
@@ -32,9 +30,9 @@ const Navbar: React.FC = () => {
   return (
     <div className='flex justify-center'>
       <div className='flex items-center justify-between w-full max-w-[800px]'>
-        <Link to='/' className='text-2xl font-bold'>
+        <a href='/' className='text-2xl font-bold'>
           Revite
-        </Link>
+        </a>
 
         <div className='flex items-center gap-4'>
           {isAuthenticated ? (
@@ -52,7 +50,7 @@ const Navbar: React.FC = () => {
           ) : (
             <>
               <Button variant='outline'>
-                <Link to='/signup'>Sign up</Link>
+                <a href='/signup'>Sign up</a>
               </Button>
             </>
           )}

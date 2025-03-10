@@ -1,13 +1,14 @@
 import axios from 'axios'
 
 // console.log('MODE:', import.meta.env.MODE)
+// console.log('VITE_BUILD_ENV:', import.meta.env.VITE_BUILD_ENV)
 // console.log('VITE_SERVER_URL:', import.meta.env.VITE_SERVER_URL)
-// console.log('VITE_PROD_SERVER_URL:', import.meta.env.VITE_PROD_SERVER_URL)
+// console.log('VITE_REMOTE_SERVER_URL:', import.meta.env.VITE_REMOTE_SERVER_URL)
 
 const api = axios.create({
   baseURL:
-    import.meta.env.MODE === 'production'
-      ? import.meta.env.VITE_PROD_SERVER_URL
+    import.meta.env.VITE_BUILD_ENV === 'remote'
+      ? import.meta.env.VITE_REMOTE_SERVER_URL
       : import.meta.env.VITE_SERVER_URL,
   withCredentials: true,
 })
