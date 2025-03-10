@@ -55,108 +55,138 @@ const prisma = new PrismaClient()
 
 // Signup
 router.post('/signup', (async (req: SignupRequest, res: Response) => {
-  const data = signupSchema.parse(req.body)
-  const existingUser = await prisma.user.findUnique({ where: { email: data.email } })
-  if (existingUser) {
-    return res.status(400).json({ error: 'Email already exists' })
+  try {
+    const data = signupSchema.parse(req.body)
+    const existingUser = await prisma.user.findUnique({ where: { email: data.email } })
+    if (existingUser) {
+      return res.status(400).json({ error: 'Email already exists' })
+    }
+    const hashedPassword = await bcrypt.hash(data.password, 10)
+    await prisma.user.create({ data: { email: data.email, name: data.name, hashedPassword, createdAt: new Date() } })
+    res.json({ message: 'User created' })
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ error: 'Internal server error' })
   }
-  const hashedPassword = await bcrypt.hash(data.password, 10)
-  await prisma.user.create({ data: { email: data.email, name: data.name, hashedPassword, createdAt: new Date() } })
-  res.json({ message: 'User created' })
 }) as RequestHandler)
 
 // Send email
 router.post('/send-email', (async (req: SendEmailRequest, res: Response) => {
-  const data = sendEmailSchema.parse(req.body)
-  const user = await prisma.user.findUnique({ where: { email: data.email } })
-  if (!user) {
-    return res.status(400).json({ error: 'User not found' })
+  try {
+    const data = sendEmailSchema.parse(req.body)
+    const user = await prisma.user.findUnique({ where: { email: data.email } })
+    if (!user) {
+      return res.status(400).json({ error: 'User not found' })
+    }
+    const verifyToken = jwt.sign(
+      { email: user.email, random: Math.random().toString(36).substring(2, 18) },
+      process.env.JWT_SECRET as string,
+      { expiresIn: '600s' }
+    )
+    await prisma.user.update({ where: { id: user.id }, data: { verifyToken } })
+    resendSendEmail({
+      to: data.email,
+      subject: 'Verify your email address',
+      url: `${baseUrl}/verify?token=${verifyToken}`,
+    })
+    res.json({ message: 'Email sent' })
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ error: 'Internal server error' })
   }
-  const verifyToken = jwt.sign(
-    { email: user.email, random: Math.random().toString(36).substring(2, 18) },
-    process.env.JWT_SECRET as string,
-    { expiresIn: '600s' }
-  )
-  await prisma.user.update({ where: { id: user.id }, data: { verifyToken } })
-  resendSendEmail({
-    to: data.email,
-    subject: 'Verify your email address',
-    url: `${baseUrl}/verify?token=${verifyToken}`,
-  })
-  res.json({ message: 'Email sent' })
 }) as RequestHandler)
 
 // Verify email
 router.post('/verify-email', (async (req: VerifyEmailRequest, res: Response) => {
-  const data = verifyEmailSchema.parse(req.body)
-  const decoded = jwt.verify(data.token, process.env.JWT_SECRET as string) as { email: string }
-  const user = await prisma.user.findUnique({ where: { email: decoded.email } })
-  if (!user) {
-    return res.status(400).json({ error: 'User not found' })
-  }
-  if (user.verifyToken !== data.token) {
-    return res.status(400).json({ error: 'Token expired' })
-  }
-  await prisma.user.update({ where: { id: user.id }, data: { emailVerified: true } })
-  const accessToken = jwt.sign(
-    { email: user.email, random: Math.random().toString(36).substring(2, 18) },
-    process.env.JWT_SECRET as string,
-    {
-      expiresIn: '1d',
+  try {
+    const data = verifyEmailSchema.parse(req.body)
+    const decoded = jwt.verify(data.token, process.env.JWT_SECRET as string) as { email: string }
+    const user = await prisma.user.findUnique({ where: { email: decoded.email } })
+    if (!user) {
+      return res.status(400).json({ error: 'User not found' })
     }
-  )
-  res.json({
-    user: { id: user.id, email: user.email, name: user.name, emailVerified: true, image: user.image },
-    accessToken,
-  })
+    if (user.verifyToken !== data.token) {
+      return res.status(400).json({ error: 'Token expired' })
+    }
+    await prisma.user.update({ where: { id: user.id }, data: { emailVerified: true } })
+    const accessToken = jwt.sign(
+      { email: user.email, random: Math.random().toString(36).substring(2, 18) },
+      process.env.JWT_SECRET as string,
+      {
+        expiresIn: '1d',
+      }
+    )
+    res.json({
+      user: { id: user.id, email: user.email, name: user.name, emailVerified: true, image: user.image },
+      accessToken,
+    })
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ error: 'Internal server error' })
+  }
 }) as RequestHandler)
 
 // Signin
 router.post('/signin', (async (req: SigninRequest, res: Response) => {
-  const data = signinSchema.parse(req.body)
-  const user = await prisma.user.findUnique({ where: { email: data.email } })
-  if (!user) {
-    return res.status(400).json({ error: 'Invalid user' })
+  try {
+    const data = signinSchema.parse(req.body)
+    const user = await prisma.user.findUnique({ where: { email: data.email } })
+    if (!user) {
+      return res.status(400).json({ error: 'Invalid user' })
+    }
+    const isValid = await bcrypt.compare(data.password, user.hashedPassword)
+    if (!isValid) {
+      return res.status(400).json({ error: 'Invalid password' })
+    }
+    if (!user.emailVerified) {
+      return res.status(400).json({ error: 'Email not verified' })
+    }
+    const accessToken = jwt.sign(
+      { email: user.email, random: Math.random().toString(36).substring(2, 18) },
+      process.env.JWT_SECRET as string,
+      { expiresIn: '1d' }
+    )
+    res.json({
+      user: { id: user.id, email: user.email, name: user.name, image: user.image },
+      accessToken,
+    })
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ error: 'Internal server error' })
   }
-  const isValid = await bcrypt.compare(data.password, user.hashedPassword)
-  if (!isValid) {
-    return res.status(400).json({ error: 'Invalid password' })
-  }
-  if (!user.emailVerified) {
-    return res.status(400).json({ error: 'Email not verified' })
-  }
-  const accessToken = jwt.sign(
-    { email: user.email, random: Math.random().toString(36).substring(2, 18) },
-    process.env.JWT_SECRET as string,
-    { expiresIn: '1d' }
-  )
-  res.json({
-    user: { id: user.id, email: user.email, name: user.name, image: user.image },
-    accessToken,
-  })
 }) as RequestHandler)
 
 // Signout
 router.post('/signout', (async (req: Request, res: Response) => {
-  const token = req.headers.authorization?.split(' ')[1]
-  if (!token) {
-    return res.status(400).json({ error: 'No token provided' })
+  try {
+    const token = req.headers.authorization?.split(' ')[1]
+    if (!token) {
+      return res.status(400).json({ error: 'No token provided' })
+    }
+    res.json({ message: 'Logged out successfully' })
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ error: 'Internal server error' })
   }
-  res.json({ message: 'Logged out successfully' })
 }) as RequestHandler)
 
 // Get current user
 router.get('/me', (async (req: Request, res: Response) => {
-  const token = req.headers.authorization?.split(' ')[1]
-  if (!token) {
-    return res.status(400).json({ error: 'No token provided' })
+  try {
+    const token = req.headers.authorization?.split(' ')[1]
+    if (!token) {
+      return res.status(400).json({ error: 'No token provided' })
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { email: string }
+    const user = await prisma.user.findUnique({ where: { email: decoded.email } })
+    if (!user) {
+      return res.status(400).json({ error: 'User not found' })
+    }
+    res.json({ user: { id: user.id, email: user.email, name: user.name, image: user.image } })
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ error: 'Internal server error' })
   }
-  const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { email: string }
-  const user = await prisma.user.findUnique({ where: { email: decoded.email } })
-  if (!user) {
-    return res.status(400).json({ error: 'User not found' })
-  }
-  res.json({ user: { id: user.id, email: user.email, name: user.name, image: user.image } })
 }) as RequestHandler)
 
 export default router
