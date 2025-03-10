@@ -5,15 +5,10 @@ import useAuthStore from '@/lib/store'
 import api from '@/lib/api'
 import useTheme from '@/hooks/use-theme'
 import { Button } from './ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from './ui/dropdown-menu'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu'
 
 const Navbar: React.FC = () => {
-  const { user, isAuthenticated, setUser } = useAuthStore()
+  const { user, isAuthenticated, setUser, setIsAuthenticated } = useAuthStore()
   const { theme, setTheme } = useTheme()
 
   const handleLogout = async () => {
@@ -21,9 +16,14 @@ const Navbar: React.FC = () => {
       await api.post('/api/auth/signout')
       localStorage.removeItem('accessToken')
       setUser(null)
+      setIsAuthenticated(false)
       navigate('/')
     } catch (error: any) {
-      toast.error(error.response.data.error)
+      if (error.response.status === 400) {
+        toast.error(error.response.data.error)
+      } else {
+        toast.error('Internal server error')
+      }
     }
   }
 
@@ -54,11 +54,7 @@ const Navbar: React.FC = () => {
               </Button>
             </>
           )}
-          <Button
-            onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-            variant='outline'
-            size='icon'
-          >
+          <Button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')} variant='outline' size='icon'>
             {theme === 'light' ? <SunIcon /> : <MoonIcon />}
           </Button>
         </div>

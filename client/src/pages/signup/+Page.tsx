@@ -3,9 +3,10 @@ import { z } from 'zod'
 import { toast } from 'sonner'
 import { zodResolver } from '@hookform/resolvers/zod'
 import api from '@/lib/api'
-import useAuthStore from '@/lib/store'
 import { Button } from '@/components/ui/button'
 import { navigate } from 'vike/client/router'
+import useAuthStore from '@/lib/store'
+import { useEffect } from 'react'
 
 const registerSchema = z.object({
   name: z.string().min(2).optional(),
@@ -16,7 +17,7 @@ const registerSchema = z.object({
 type RegisterForm = z.infer<typeof registerSchema>
 
 const Page: React.FC = () => {
-  const { setUser } = useAuthStore()
+  const { isAuthenticated, setUser, setIsAuthenticated } = useAuthStore()
   const {
     register,
     handleSubmit,
@@ -25,14 +26,24 @@ const Page: React.FC = () => {
     resolver: zodResolver(registerSchema),
   })
 
-  const onSubmit = async (data: RegisterForm) => {
-    try {
-      const response = await api.post('/api/auth/signup', data)
-      localStorage.setItem('accessToken', response.data.accessToken)
-      setUser(response.data.user)
+  useEffect(() => {
+    if (isAuthenticated) {
       navigate('/')
+    }
+  }, [isAuthenticated])
+
+  const onSubmit = async (data: RegisterForm) => {
+    setUser({ email: data.email, name: data.name, emailVerified: false })
+    setIsAuthenticated(false)
+    try {
+      await api.post('/api/auth/signup', data)
+      navigate('/verify')
     } catch (error: any) {
-      toast.error(error.response.data.error)
+      if (error.response.status === 400) {
+        toast.error(error.response.data.error)
+      } else {
+        toast.error('Internal server error')
+      }
     }
   }
 
@@ -42,15 +53,8 @@ const Page: React.FC = () => {
       <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
         <div className='space-y-2'>
           <label htmlFor='name'>Name</label>
-          <input
-            {...register('name')}
-            id='name'
-            className='w-full rounded-md border p-2'
-            placeholder='John Doe'
-          />
-          {errors.name && (
-            <p className='text-sm text-red-500'>{errors.name.message}</p>
-          )}
+          <input {...register('name')} id='name' className='w-full rounded-md border p-2' placeholder='John Doe' />
+          {errors.name && <p className='text-sm text-red-500'>{errors.name.message}</p>}
         </div>
         <div className='space-y-2'>
           <label htmlFor='email'>Email</label>
@@ -61,21 +65,12 @@ const Page: React.FC = () => {
             className='w-full rounded-md border p-2'
             placeholder='me@example.com'
           />
-          {errors.email && (
-            <p className='text-sm text-red-500'>{errors.email.message}</p>
-          )}
+          {errors.email && <p className='text-sm text-red-500'>{errors.email.message}</p>}
         </div>
         <div className='space-y-2'>
           <label htmlFor='password'>Password</label>
-          <input
-            {...register('password')}
-            id='password'
-            type='password'
-            className='w-full rounded-md border p-2'
-          />
-          {errors.password && (
-            <p className='text-sm text-red-500'>{errors.password.message}</p>
-          )}
+          <input {...register('password')} id='password' type='password' className='w-full rounded-md border p-2' />
+          {errors.password && <p className='text-sm text-red-500'>{errors.password.message}</p>}
         </div>
         <p className='text-sm text-gray-500'>
           Already have an account?{' '}

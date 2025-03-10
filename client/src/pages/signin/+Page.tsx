@@ -6,6 +6,7 @@ import api from '@/lib/api'
 import useAuthStore from '@/lib/store'
 import { Button } from '@/components/ui/button'
 import { navigate } from 'vike/client/router'
+import { useEffect } from 'react'
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -15,7 +16,7 @@ const loginSchema = z.object({
 type LoginForm = z.infer<typeof loginSchema>
 
 const Page: React.FC = () => {
-  const { setUser } = useAuthStore()
+  const { isAuthenticated, setUser, setIsAuthenticated } = useAuthStore()
   const {
     register,
     handleSubmit,
@@ -24,14 +25,31 @@ const Page: React.FC = () => {
     resolver: zodResolver(loginSchema),
   })
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/')
+    }
+  }, [isAuthenticated])
+
   const onSubmit = async (data: LoginForm) => {
+    setUser({ email: data.email, emailVerified: false })
+    setIsAuthenticated(false)
     try {
       const response = await api.post('/api/auth/signin', data)
       localStorage.setItem('accessToken', response.data.accessToken)
       setUser(response.data.user)
+      setIsAuthenticated(true)
       navigate('/')
     } catch (error: any) {
-      toast.error(error.response.data.error)
+      if (error.response.status === 400) {
+        if (error.response.data.error === 'Email not verified') {
+          navigate('/verify')
+        } else {
+          toast.error(error.response.data.error)
+        }
+      } else {
+        toast.error('Internal server error')
+      }
     }
   }
 
@@ -48,21 +66,12 @@ const Page: React.FC = () => {
             className='w-full rounded-md border p-2'
             placeholder='me@example.com'
           />
-          {errors.email && (
-            <p className='text-sm text-red-500'>{errors.email.message}</p>
-          )}
+          {errors.email && <p className='text-sm text-red-500'>{errors.email.message}</p>}
         </div>
         <div className='space-y-2'>
           <label htmlFor='password'>Password</label>
-          <input
-            {...register('password')}
-            id='password'
-            type='password'
-            className='w-full rounded-md border p-2'
-          />
-          {errors.password && (
-            <p className='text-sm text-red-500'>{errors.password.message}</p>
-          )}
+          <input {...register('password')} id='password' type='password' className='w-full rounded-md border p-2' />
+          {errors.password && <p className='text-sm text-red-500'>{errors.password.message}</p>}
         </div>
         <p className='text-sm text-gray-500'>
           Don't have an account yet?{' '}

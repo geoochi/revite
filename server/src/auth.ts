@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { z } from 'zod'
+import { resendSendEmail } from './email'
 
 interface SigninInput {
   email: string
@@ -21,8 +22,13 @@ interface SignupRequest extends Request {
   body: SignupInput
 }
 
-const router = Router()
-const prisma = new PrismaClient()
+interface SendEmailRequest extends Request {
+  body: { email: string }
+}
+
+interface VerifyEmailRequest extends Request {
+  body: { token: string }
+}
 
 const signinSchema = z.object({
   email: z.string().email(),
@@ -35,185 +41,122 @@ const signupSchema = z.object({
   password: z.string().min(6),
 })
 
+const sendEmailSchema = z.object({
+  email: z.string().email(),
+})
+
+const verifyEmailSchema = z.object({
+  token: z.string(),
+})
+
+const baseUrl = process.env.NODE_ENV === 'production' ? process.env.PROD_CLIENT_URL : process.env.CLIENT_URL
+const router = Router()
+const prisma = new PrismaClient()
+
 // Signup
 router.post('/signup', (async (req: SignupRequest, res: Response) => {
-  try {
-    const data = signupSchema.parse(req.body)
-
-    // Check if user exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email: data.email },
-    })
-
-    if (existingUser) {
-      return res.status(400).json({ error: 'Email already exists' })
-    }
-
-    // Hash password
-    const hashedPassword = await bcrypt.hash(data.password, 10)
-
-    // Create user
-    const user = await prisma.user.create({
-      data: {
-        email: data.email,
-        name: data.name,
-        emailVerified: false,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        accounts: {
-          create: {
-            id: Math.random().toString(36).slice(2, 9),
-            accountId: Math.random().toString(36).slice(2, 9),
-            providerId: 'credentials',
-            password: hashedPassword,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          },
-        },
-      },
-    })
-
-    // Create session
-    const session = await prisma.session.create({
-      data: {
-        id: Math.random().toString(36).slice(2, 9),
-        token: Math.random().toString(36).slice(2, 9),
-        userId: user.id,
-        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        ipAddress: req.ip,
-        userAgent: req.headers['user-agent'],
-      },
-    })
-
-    // Generate JWT
-    const accessToken = jwt.sign(
-      { userId: user.id },
-      process.env.JWT_SECRET as string,
-      { expiresIn: '1d' }
-    )
-
-    res.json({ user, session, accessToken })
-  } catch (error) {
-    console.error(error)
-    res.status(400).json({ error: error })
+  const data = signupSchema.parse(req.body)
+  const existingUser = await prisma.user.findUnique({ where: { email: data.email } })
+  if (existingUser) {
+    return res.status(400).json({ error: 'Email already exists' })
   }
+  const hashedPassword = await bcrypt.hash(data.password, 10)
+  await prisma.user.create({ data: { email: data.email, name: data.name, hashedPassword, createdAt: new Date() } })
+  res.json({ message: 'User created' })
+}) as RequestHandler)
+
+// Send email
+router.post('/send-email', (async (req: SendEmailRequest, res: Response) => {
+  const data = sendEmailSchema.parse(req.body)
+  const user = await prisma.user.findUnique({ where: { email: data.email } })
+  if (!user) {
+    return res.status(400).json({ error: 'User not found' })
+  }
+  const verifyToken = jwt.sign(
+    { email: user.email, random: Math.random().toString(36).substring(2, 18) },
+    process.env.JWT_SECRET as string,
+    { expiresIn: '600s' }
+  )
+  await prisma.user.update({ where: { id: user.id }, data: { verifyToken } })
+  resendSendEmail({
+    to: data.email,
+    subject: 'Verify your email address',
+    url: `${baseUrl}/verify?token=${verifyToken}`,
+  })
+  res.json({ message: 'Email sent' })
+}) as RequestHandler)
+
+// Verify email
+router.post('/verify-email', (async (req: VerifyEmailRequest, res: Response) => {
+  const data = verifyEmailSchema.parse(req.body)
+  const decoded = jwt.verify(data.token, process.env.JWT_SECRET as string) as { email: string }
+  const user = await prisma.user.findUnique({ where: { email: decoded.email } })
+  if (!user) {
+    return res.status(400).json({ error: 'User not found' })
+  }
+  if (user.verifyToken !== data.token) {
+    return res.status(400).json({ error: 'Token expired' })
+  }
+  await prisma.user.update({ where: { id: user.id }, data: { emailVerified: true } })
+  const accessToken = jwt.sign(
+    { email: user.email, random: Math.random().toString(36).substring(2, 18) },
+    process.env.JWT_SECRET as string,
+    {
+      expiresIn: '1d',
+    }
+  )
+  res.json({
+    user: { id: user.id, email: user.email, name: user.name, emailVerified: true, image: user.image },
+    accessToken,
+  })
 }) as RequestHandler)
 
 // Signin
 router.post('/signin', (async (req: SigninRequest, res: Response) => {
-  try {
-    const data = signinSchema.parse(req.body)
-
-    // Find user
-    const user = await prisma.user.findUnique({
-      where: { email: data.email },
-      include: {
-        accounts: {
-          where: { providerId: 'credentials' },
-        },
-      },
-    })
-
-    if (!user || !user.accounts[0]) {
-      return res.status(400).json({ error: 'Invalid user' })
-    }
-
-    // Check password
-    const isValid = await bcrypt.compare(
-      data.password,
-      user.accounts[0].password as string
-    )
-
-    if (!isValid) {
-      return res.status(400).json({ error: 'Invalid password' })
-    }
-
-    // Create session
-    const session = await prisma.session.create({
-      data: {
-        id: Math.random().toString(36).slice(2, 9),
-        token: Math.random().toString(36).slice(2, 9),
-        userId: user.id,
-        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        ipAddress: req.ip,
-        userAgent: req.headers['user-agent'],
-      },
-    })
-
-    // Generate JWT
-    const accessToken = jwt.sign(
-      { userId: user.id },
-      process.env.JWT_SECRET as string,
-      { expiresIn: '1d' }
-    )
-
-    // Remove password from response
-    const { accounts, ...userWithoutAccounts } = user
-
-    res.json({
-      user: userWithoutAccounts,
-      session,
-      accessToken,
-    })
-  } catch (error) {
-    console.error(error)
-    res.status(400).json({ error: error })
+  const data = signinSchema.parse(req.body)
+  const user = await prisma.user.findUnique({ where: { email: data.email } })
+  if (!user) {
+    return res.status(400).json({ error: 'Invalid user' })
   }
+  const isValid = await bcrypt.compare(data.password, user.hashedPassword)
+  if (!isValid) {
+    return res.status(400).json({ error: 'Invalid password' })
+  }
+  if (!user.emailVerified) {
+    return res.status(400).json({ error: 'Email not verified' })
+  }
+  const accessToken = jwt.sign(
+    { email: user.email, random: Math.random().toString(36).substring(2, 18) },
+    process.env.JWT_SECRET as string,
+    { expiresIn: '1d' }
+  )
+  res.json({
+    user: { id: user.id, email: user.email, name: user.name, image: user.image },
+    accessToken,
+  })
 }) as RequestHandler)
 
 // Signout
 router.post('/signout', (async (req: Request, res: Response) => {
-  try {
-    const token = req.headers.authorization?.split(' ')[1]
-    if (!token) {
-      return res.status(401).json({ error: 'Unauthorized' })
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
-      userId: string
-    }
-
-    // Delete all sessions for user
-    await prisma.session.deleteMany({
-      where: { userId: decoded.userId },
-    })
-
-    res.json({ message: 'Logged out successfully' })
-  } catch (error) {
-    console.error(error)
-    res.status(401).json({ error: 'Unauthorized' })
+  const token = req.headers.authorization?.split(' ')[1]
+  if (!token) {
+    return res.status(400).json({ error: 'No token provided' })
   }
+  res.json({ message: 'Logged out successfully' })
 }) as RequestHandler)
 
 // Get current user
 router.get('/me', (async (req: Request, res: Response) => {
-  try {
-    const token = req.headers.authorization?.split(' ')[1]
-    if (!token) {
-      return res.status(401).json({ error: 'Unauthorized' })
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
-      userId: string
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { id: decoded.userId },
-    })
-
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' })
-    }
-
-    res.json(user)
-  } catch (error) {
-    console.error(error)
-    res.status(401).json({ error: error })
+  const token = req.headers.authorization?.split(' ')[1]
+  if (!token) {
+    return res.status(400).json({ error: 'No token provided' })
   }
+  const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { email: string }
+  const user = await prisma.user.findUnique({ where: { email: decoded.email } })
+  if (!user) {
+    return res.status(400).json({ error: 'User not found' })
+  }
+  res.json({ user: { id: user.id, email: user.email, name: user.name, image: user.image } })
 }) as RequestHandler)
 
 export default router
