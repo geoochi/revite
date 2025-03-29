@@ -12,34 +12,10 @@ export async function resendSendEmail({ to, subject, url }: EmailOptions) {
   console.log(`to: ${to}\nsubject: ${subject}`)
   try {
     const { data, error } = await resend.emails.send({
-      from: `${process.env.EMAIL_MY_EMAIL_NAME} <${process.env.EMAIL_MY_EMAIL_ADDRESS}>`,
+      from: `${process.env.MY_EMAIL_NAME} <${process.env.MY_EMAIL_ADDRESS}>`,
       to: [to],
       subject: subject,
-      react: (
-        <>
-          <p>Click the link below to verify your email:</p>
-          <button
-            style={{
-              backgroundColor: '#8cdd76',
-              borderRadius: '4px',
-              border: 'none',
-              width: '100px',
-              height: '40px',
-            }}
-          >
-            <a
-              style={{
-                textDecoration: 'none',
-                color: 'white',
-                fontSize: '1.5rem',
-              }}
-              href={url}
-            >
-              Verify
-            </a>
-          </button>
-        </>
-      ),
+      html: `<div><p>Click the link below to verify your email:</p><button style=" background-color: #8cdd76; border-radius: 4px; border: 0; width: 100px; height: 40px; " ><a style=" text-decoration: none; color: white; font-size: 24px; line-height: 32px; " href="${url}" >Verify </a></button></div>`,
     })
 
     if (error) {

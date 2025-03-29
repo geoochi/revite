@@ -84,11 +84,12 @@ router.post('/send-email', (async (req: SendEmailRequest, res: Response) => {
       { expiresIn: '600s' }
     )
     await prisma.user.update({ where: { id: user.id }, data: { verifyToken } })
-    resendSendEmail({
+    const resendResponse = await resendSendEmail({
       to: data.email,
       subject: 'Verify your email address',
-      url: `${baseUrl}/verify?token=${verifyToken}`,
+      url: `${baseUrl}/#/verify?token=${verifyToken}`,
     })
+    console.log(resendResponse)
     res.json({ message: 'Email sent' })
   } catch (error) {
     console.error(error)

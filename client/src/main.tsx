@@ -1,9 +1,16 @@
+import { createRoot } from 'react-dom/client'
+import { HashRouter, Routes, Route } from 'react-router-dom'
+import Home from './pages/index'
+import SignIn from './pages/signin'
+import SignUp from './pages/signup'
+import Verify from './pages/verify'
+import './globals.css'
+
 import { useEffect } from 'react'
 import { toast, Toaster } from 'sonner'
 import Navbar from '@/components/navbar'
 import useAuthStore from '@/lib/store'
 import api from '@/lib/api'
-import './globals.css'
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { setUser, setIsAuthenticated } = useAuthStore()
@@ -40,4 +47,19 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   )
 }
 
-export default Layout
+const App: React.FC = () => {
+  return (
+    <HashRouter>
+      <Layout>
+        <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='/signin' element={<SignIn />} />
+          <Route path='/signup' element={<SignUp />} />
+          <Route path='/verify' element={<Verify />} />
+        </Routes>
+      </Layout>
+    </HashRouter>
+  )
+}
+
+createRoot(document.getElementById('root')!).render(<App />)

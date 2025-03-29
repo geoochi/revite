@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import api from '@/lib/api'
 import useAuthStore from '@/lib/store'
 import { Button } from '@/components/ui/button'
-import { navigate } from 'vike/client/router'
+import { useNavigate, Link } from 'react-router-dom'
 import { useEffect } from 'react'
 
 const loginSchema = z.object({
@@ -17,6 +17,7 @@ type LoginForm = z.infer<typeof loginSchema>
 
 const Page: React.FC = () => {
   const { isAuthenticated, setUser, setIsAuthenticated } = useAuthStore()
+  const navigate = useNavigate()
   const {
     register,
     handleSubmit,
@@ -75,9 +76,9 @@ const Page: React.FC = () => {
         </div>
         <p className='text-sm text-gray-500'>
           Don't have an account yet?{' '}
-          <a href='/signup' className='underline'>
+          <Link to='/signup' className='underline'>
             Sign up
-          </a>
+          </Link>
         </p>
         <Button type='submit' className='w-full' disabled={isSubmitting}>
           {isSubmitting ? 'Loading...' : 'Sign in'}

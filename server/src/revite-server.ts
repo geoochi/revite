@@ -13,7 +13,10 @@ const app = express()
 
 app.use(
   cors({
-    origin: process.env.NODE_ENV === 'production' ? process.env.PROD_CLIENT_URL : process.env.CLIENT_URL,
+    origin:
+      process.env.NODE_ENV === 'production'
+        ? process.env.PROD_CLIENT_URL?.replace('/revite', '')
+        : process.env.CLIENT_URL,
     credentials: true,
   })
 )

@@ -4,7 +4,7 @@ import { toast } from 'sonner'
 import { zodResolver } from '@hookform/resolvers/zod'
 import api from '@/lib/api'
 import { Button } from '@/components/ui/button'
-import { navigate } from 'vike/client/router'
+import { useNavigate, Link } from 'react-router-dom'
 import useAuthStore from '@/lib/store'
 import { useEffect } from 'react'
 
@@ -18,6 +18,7 @@ type RegisterForm = z.infer<typeof registerSchema>
 
 const Page: React.FC = () => {
   const { isAuthenticated, setUser, setIsAuthenticated } = useAuthStore()
+  const navigate = useNavigate()
   const {
     register,
     handleSubmit,
@@ -74,9 +75,9 @@ const Page: React.FC = () => {
         </div>
         <p className='text-sm text-gray-500'>
           Already have an account?{' '}
-          <a href='/signin' className='underline'>
+          <Link to='/signin' className='underline'>
             Sign in
-          </a>
+          </Link>
         </p>
         <Button type='submit' className='w-full' disabled={isSubmitting}>
           {isSubmitting ? 'Loading...' : 'Sign up'}

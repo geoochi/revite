@@ -3,12 +3,13 @@ import { useEffect, useState } from 'react'
 import api from '@/lib/api'
 import useAuthStore from '@/lib/store'
 import { toast } from 'sonner'
-import { navigate } from 'vike/client/router'
+import { useNavigate } from 'react-router-dom'
 
 const Page: React.FC = () => {
   const { user, isAuthenticated, setUser, setIsAuthenticated } = useAuthStore()
   const [isSentEmail, setIsSentEmail] = useState(false)
   const [countdown, setCountdown] = useState(30)
+  const navigate = useNavigate()
 
   const sendEmailRequest = async () => {
     setIsSentEmail(true)
@@ -33,7 +34,10 @@ const Page: React.FC = () => {
 
   useEffect(() => {
     const check = async () => {
-      const token = new URLSearchParams(window.location.search).get('token')
+      const hash = window.location.hash
+      const hashParts = hash.split('?')
+      const searchParams = new URLSearchParams(hashParts[1])
+      const token = searchParams.get('token')
       if (token) {
         try {
           const response = await api.post('/api/auth/verify-email', { token })

@@ -1,5 +1,5 @@
 import { toast } from 'sonner'
-import { navigate } from 'vike/client/router'
+import { useNavigate, Link } from 'react-router-dom'
 import { SunIcon, MoonIcon, LogOut } from 'lucide-react'
 import useAuthStore from '@/lib/store'
 import api from '@/lib/api'
@@ -10,6 +10,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 const Navbar: React.FC = () => {
   const { user, isAuthenticated, setUser, setIsAuthenticated } = useAuthStore()
   const { theme, setTheme } = useTheme()
+  const navigate = useNavigate()
 
   const handleLogout = async () => {
     try {
@@ -30,9 +31,9 @@ const Navbar: React.FC = () => {
   return (
     <div className='flex justify-center'>
       <div className='flex items-center justify-between w-full max-w-[800px]'>
-        <a href='/' className='text-2xl font-bold'>
+        <Link to='/' className='text-2xl font-bold'>
           Revite
-        </a>
+        </Link>
 
         <div className='flex items-center gap-4'>
           {isAuthenticated ? (
@@ -50,7 +51,7 @@ const Navbar: React.FC = () => {
           ) : (
             <>
               <Button variant='outline'>
-                <a href='/signup'>Sign up</a>
+                <Link to='/signup'>Sign up</Link>
               </Button>
             </>
           )}

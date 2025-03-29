@@ -1,4 +1,5 @@
 import useAuthStore from '@/lib/store'
+import { Link } from 'react-router-dom'
 
 const Page: React.FC = () => {
   const { user, isAuthenticated } = useAuthStore()
@@ -12,9 +13,9 @@ const Page: React.FC = () => {
           <hr />
           <p className='text-gray-500 dark:text-gray-400'>
             Please{' '}
-            <a href='/signin' className='underline'>
+            <Link to='/signin' className='underline'>
               sign in
-            </a>{' '}
+            </Link>{' '}
             to continue.
           </p>
         </>
