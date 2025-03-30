@@ -23,46 +23,50 @@ cd revite
 
 ### 2. install dependencies and set environment variables
 
+client:
+
 ```sh
-cd client
 pnpm install
 cp .env.example .env
 # set your own environment variables
 ```
 
+server:
+
 ```sh
-cd ../server
 pnpm install
 cp .env.example .env
 # set your own environment variables
 pnpm prisma db push
 ```
 
-### 3. run dev server
+### 3. development
 
-terminal 1
+client:
 
 ```sh
-cd ../client
 pnpm d
 ```
 
-terminal 2
+server:
 
 ```sh
-cd ../server
 pnpm d
 ```
 
-### 4. run prisma studio (optional)
+### 4. production
 
-terminal 3
+client:
 
 ```sh
-cd ../server
-pnpm q
+pnpm b
+# modify the server url in client/.env
+pnpm p
 ```
 
-### 5. open website
+server:
 
-open http://localhost:3000/
+```sh
+pnpm b
+pnpm p-remote
+```
