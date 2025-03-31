@@ -185,6 +185,9 @@ router.get('/me', (async (req: Request, res: Response) => {
     }
     res.json({ user: { id: user.id, email: user.email, name: user.name, image: user.image } })
   } catch (error) {
+    if (error instanceof jwt.JsonWebTokenError) {
+      return res.status(400).json({ error: 'Token expired' })
+    }
     console.error(error)
     res.status(500).json({ error: 'Internal server error' })
   }
