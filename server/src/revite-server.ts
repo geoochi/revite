@@ -28,5 +28,5 @@ app.use('/api/auth', authRoutes)
 const PORT = process.env.PORT
 
 app.listen(PORT, () => {
-  console.log(`Server is running on http://127.0.0.1:${PORT}`)
+  console.log(`Server is running on http://localhost:${PORT}`)
 })
