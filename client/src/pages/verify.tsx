@@ -6,7 +6,7 @@ import { toast } from 'sonner'
 import { useNavigate } from 'react-router-dom'
 
 const Page: React.FC = () => {
-  const { user, isAuthenticated, setUser, setIsAuthenticated } = useAuthStore()
+  const { user, setUser, setIsAuthenticated } = useAuthStore()
   const [isSentEmail, setIsSentEmail] = useState(false)
   const [countdown, setCountdown] = useState(30)
   const navigate = useNavigate()
