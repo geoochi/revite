@@ -4,12 +4,25 @@ import api from '@/lib/api'
 import type { DropdownMenuItem } from '@nuxt/ui'
 
 const colorMode = useColorMode()
-colorMode.preference = 'system'
 const router = useRouter()
 const toast = useToast()
 const store = useAuthStore()
 const user = computed(() => store.user)
 const isAuthenticated = computed(() => store.isAuthenticated)
+
+const loaded = ref(false)
+onMounted(() => {
+  const saved = localStorage.getItem('colorMode')
+  console.log(saved)
+  if (saved === 'system') colorMode.preference = colorMode.value
+  else colorMode.preference = saved as 'light' | 'dark'
+  loaded.value = true
+})
+
+const toggleColorMode = () => {
+  colorMode.preference = colorMode.preference === 'light' ? 'dark' : 'light'
+  localStorage.setItem('colorMode', colorMode.preference)
+}
 
 const handleLogout = async () => {
   try {
@@ -35,23 +48,11 @@ const items: DropdownMenuItem[] = [{ label: 'Sign out', icon: 'i-lucide-log-out'
         <UDropdownMenu v-if="isAuthenticated" :items="items" :content="{ align: 'start' }">
           <UButton :label="user?.name" color="neutral" variant="outline" />
         </UDropdownMenu>
-        <UButton v-else>
-          <NuxtLink to="/signin"> Sign in </NuxtLink>
-        </UButton>
+        <UButton v-else to="/signin"> Sign in </UButton>
         <UButton
-          @click="
-            () => {
-              colorMode.value = colorMode.value === 'dark' ? 'light' : 'dark'
-              colorMode.preference = colorMode.value
-            }
-          "
-          :icon="
-            colorMode.preference === 'system'
-              ? 'i-lucide-monitor-smartphone'
-              : colorMode.value === 'dark'
-              ? 'i-lucide-moon'
-              : 'i-lucide-sun'
-          "
+          v-if="loaded"
+          @click="toggleColorMode"
+          :icon="colorMode.value === 'light' ? 'i-lucide-sun' : 'i-lucide-moon'"
         />
       </div>
     </div>
