@@ -62,7 +62,7 @@ const Page: React.FC = () => {
   }, [])
 
   return (
-    <div className='flex-col space-y-4 text-center'>
+    <div className='flex flex-col items-center space-y-4'>
       <h1 className='text-3xl font-bold'>Verification email sent</h1>
       <p className='text-sm text-muted-foreground'>Please check your email for verification</p>
       <Button
