@@ -24,7 +24,13 @@ async function resendSendEmail({ to, subject, url }: EmailOptions) {
       from: `${process.env.MY_EMAIL_NAME} <${process.env.MY_EMAIL_ADDRESS}>`,
       to: [to],
       subject: subject,
-      html: `<div><p>Click the link below to verify your email:</p><button style=" background-color: #8cdd76; border-radius: 4px; border: 0; width: 100px; height: 40px; " ><a style=" text-decoration: none; color: white; font-size: 24px; line-height: 32px; " href="${url}" >Verify </a></button></div>`,
+      html: `
+      <div>
+        <p>Click the link below to verify your email:</p>
+        <button style="background-color: #8cdd76; border-radius: 4px; border: 0; width: 100px; height: 40px">
+          <a style="text-decoration: none; color: white; font-size: 24px; line-height: 32px" href="${url}">Verify </a>
+        </button>
+      </div>`,
     })
 
     if (error) {
