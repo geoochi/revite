@@ -4,7 +4,7 @@
   "scripts": {
     "d": "vite",
     "b": "vite build",
-    "p": "pnpx http-server dist/client -a localhost -p 5173"
+    "p": "pnpx http-server dist -a localhost -p 5173"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.3",
