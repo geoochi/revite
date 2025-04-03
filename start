@@ -1,0 +1,9 @@
+#! /bin/sh
+
+PROCESS_ID=$(ps x | grep 'node -r dotenv/config .output/server/index.mjs' | grep -v grep | awk '{print $1}')
+if [ -z "$PROCESS_ID" ];
+then
+    nohup node -r dotenv/config .output/server/index.mjs > log/$(date +"%Y-%m-%d_%H-%M-%S").log 2>&1 &
+else
+    echo "Server is already running"
+fi

@@ -1,0 +1,9 @@
+.DS_Store
+.nuxt
+.output
+.vscode
+dist
+node_modules
+.env
+*.db
+*.log

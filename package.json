@@ -1,0 +1,36 @@
+{
+  "type": "module",
+  "packageManager": "pnpm@10.7.0",
+  "scripts": {
+    "d": "nuxt dev",
+    "b": "nuxt build",
+    "g": "nuxt generate",
+    "p": "pnpx http-server dist -a localhost -p 3000",
+    "q": "prisma studio",
+    "start": "node -r dotenv/config .output/server/index.mjs",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@iconify-json/lucide": "^1.2.34",
+    "@nuxt/fonts": "0.11.1",
+    "@nuxt/ui": "^3.0.2",
+    "@pinia/nuxt": "^0.10.1",
+    "@prisma/client": "^6.5.0",
+    "axios": "^1.8.4",
+    "bcryptjs": "^2.4.3",
+    "clsx": "^2.1.1",
+    "jsonwebtoken": "^9.0.2",
+    "nuxt": "^3.16.2",
+    "pinia": "^3.0.1",
+    "resend": "^4.2.0",
+    "tailwind-merge": "^3.1.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/node": "^22.14.0",
+    "dotenv": "^16.4.7",
+    "prisma": "^6.5.0"
+  }
+}
