@@ -4,7 +4,7 @@
   "scripts": {
     "d": "nuxt dev",
     "b": "nuxt build",
-    "g": "nuxt generate && cp .output/public out",
+    "g": "nuxt generate && rm -rf out && cp -r .output/public out",
     "p": "pnpx http-server out -a localhost -p 3000",
     "q": "prisma studio",
     "start": "node -r dotenv/config .output/server/index.mjs",

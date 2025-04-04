@@ -30,7 +30,6 @@ onMounted(() => {
 
 <template>
   <UApp>
-    <title>Revite</title>
     <div class="min-h-screen flex flex-col p-8">
       <Navbar />
       <main class="flex-1 flex flex-col items-center justify-center">
