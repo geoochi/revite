@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@iconify-json/lucide": "^1.2.34",
-    "@nuxt/fonts": "0.11.1",
+    "@nuxt/fonts": "^0.11.1",
     "@nuxt/ui": "^3.0.2",
     "@pinia/nuxt": "^0.10.1",
     "@prisma/client": "^6.5.0",
