@@ -13,7 +13,6 @@ const isAuthenticated = computed(() => store.isAuthenticated)
 const loaded = ref(false)
 onMounted(() => {
   const saved = localStorage.getItem('colorMode')
-  console.log(saved)
   if (saved === 'system') colorMode.preference = colorMode.value
   else colorMode.preference = saved as 'light' | 'dark'
   loaded.value = true
@@ -48,10 +47,11 @@ const items: DropdownMenuItem[] = [{ label: 'Sign out', icon: 'i-lucide-log-out'
         <UDropdownMenu v-if="isAuthenticated" :items="items" :content="{ align: 'start' }">
           <UButton :label="user?.name" color="neutral" variant="outline" />
         </UDropdownMenu>
-        <UButton v-else to="/signin"> Sign in </UButton>
+        <UButton v-else to="/signin" variant="outline"> Sign in </UButton>
         <UButton
           v-if="loaded"
           @click="toggleColorMode"
+          variant="outline"
           :icon="colorMode.value === 'light' ? 'i-lucide-sun' : 'i-lucide-moon'"
         />
       </div>
