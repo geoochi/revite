@@ -7,7 +7,6 @@ const user = computed(() => store.user)
 const isSentEmail = ref(false)
 const countdown = ref(30)
 const toast = useToast()
-const router = useRouter()
 
 const sendEmailRequest = async () => {
   isSentEmail.value = true
@@ -39,7 +38,7 @@ onMounted(() => {
         store.setUser(response.data.user)
         store.setIsAuthenticated(true)
         localStorage.setItem('accessToken', response.data.accessToken)
-        router.push('/')
+        navigateTo('/')
       } catch (error: any) {
         if (error.response.status === 400) {
           toast.add({ title: error.response.data.message, color: 'error' })
@@ -48,10 +47,10 @@ onMounted(() => {
         }
       }
     } else if (!user.value) {
-      router.push('/signin')
+      navigateTo('/signin')
     } else if (!user.value?.emailVerified) {
       sendEmailRequest()
-    } else router.push('/')
+    } else navigateTo('/')
   }
   check()
 })

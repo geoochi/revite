@@ -4,7 +4,6 @@ import api from '@/lib/api'
 import type { DropdownMenuItem } from '@nuxt/ui'
 
 const colorMode = useColorMode()
-const router = useRouter()
 const toast = useToast()
 const store = useAuthStore()
 const user = computed(() => store.user)
@@ -29,7 +28,7 @@ const handleLogout = async () => {
     localStorage.removeItem('accessToken')
     store.setUser(null)
     store.setIsAuthenticated(false)
-    router.push('/')
+    navigateTo('/')
   } catch (error: any) {
     if (error.response.status === 400) toast.add({ title: error.response.data.message, color: 'error' })
     else toast.add({ title: 'Internal server error', color: 'error' })

@@ -6,7 +6,6 @@ import type { FormSubmitEvent } from '@nuxt/ui'
 
 const store = useAuthStore()
 const isAuthenticated = computed(() => store.isAuthenticated)
-const router = useRouter()
 const toast = useToast()
 
 const schema = z.object({
@@ -23,7 +22,7 @@ const state = reactive<Partial<Schema>>({
 
 onMounted(() => {
   if (isAuthenticated.value) {
-    router.push('/')
+    navigateTo('/')
   }
 })
 
@@ -32,7 +31,7 @@ const onSubmit = async (event: FormSubmitEvent<Schema>) => {
   store.setIsAuthenticated(false)
   try {
     await api.post('/api/auth/signup', event.data)
-    router.push('/verify')
+    navigateTo('/verify')
   } catch (error: any) {
     if (error.response.status === 400) {
       toast.add({ title: error.response.data.message, color: 'error' })
