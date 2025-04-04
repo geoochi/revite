@@ -31,14 +31,12 @@ onMounted(() => {
 <template>
   <UApp>
     <title>Revite</title>
-    <div v-if="checked" class="min-h-screen flex flex-col p-8">
+    <div class="min-h-screen flex flex-col p-8">
       <Navbar />
       <main class="flex-1 flex flex-col items-center justify-center">
-        <NuxtPage />
+        <NuxtPage v-if="checked" />
+        <p v-else>loading...</p>
       </main>
-    </div>
-    <div v-else class="flex justify-center items-center h-screen">
-      <p>loading...</p>
     </div>
   </UApp>
 </template>
