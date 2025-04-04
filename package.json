@@ -4,8 +4,8 @@
   "scripts": {
     "d": "nuxt dev",
     "b": "nuxt build",
-    "g": "nuxt generate",
-    "p": "pnpx http-server dist -a localhost -p 3000",
+    "g": "nuxt generate && cp .output/public out",
+    "p": "pnpx http-server out -a localhost -p 3000",
     "q": "prisma studio",
     "start": "node -r dotenv/config .output/server/index.mjs",
     "postinstall": "nuxt prepare"
