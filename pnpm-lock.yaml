@@ -12,7 +12,7 @@ importers:
         specifier: ^1.2.34
         version: 1.2.34
       '@nuxt/fonts':
-        specifier: 0.11.1
+        specifier: ^0.11.1
         version: 0.11.1(db0@0.3.1)(ioredis@5.6.0)(magicast@0.3.5)(vite@6.2.5(@types/node@22.14.0)(jiti@2.4.2)(lightningcss@1.29.2)(terser@5.39.0)(yaml@2.7.1))
       '@nuxt/ui':
         specifier: ^3.0.2
