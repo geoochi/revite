@@ -49,7 +49,6 @@ const verifyEmailSchema = z.object({
   token: z.string(),
 })
 
-const baseUrl = process.env.NODE_ENV === 'production' ? process.env.PROD_CLIENT_URL : process.env.CLIENT_URL
 const router = Router()
 const prisma = new PrismaClient()
 
@@ -87,7 +86,7 @@ router.post('/send-email', (async (req: SendEmailRequest, res: Response) => {
     const resendResponse = await resendSendEmail({
       to: data.email,
       subject: 'Verify your email address',
-      url: `${baseUrl}/#/verify?token=${verifyToken}`,
+      url: `${req.protocol}://${req.get('host')}/verify?token=${verifyToken}`,
     })
     console.log(resendResponse)
     res.json({ message: 'Email sent' })
