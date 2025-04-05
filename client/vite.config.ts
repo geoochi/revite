@@ -1,18 +1,27 @@
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import Vue from '@vitejs/plugin-vue'
+import Components from 'unplugin-vue-components/vite'
+import Pages from 'vite-plugin-pages'
 import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
 
-// https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
-  base: './',
-  server: {
-    port: 5173,
-  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
   },
+  plugins: [
+    tailwindcss(),
+    Vue({
+      include: [/\.vue$/],
+    }),
+    Pages({
+      extensions: ['vue'],
+    }),
+    Components({
+      extensions: ['vue'],
+      include: [/\.vue$/],
+    }),
+  ],
 })

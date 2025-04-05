@@ -1,22 +1,19 @@
 {
   "compilerOptions": {
-    "strict": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "sourceMap": true,
+    "target": "es2020",
+    "lib": ["ESNext", "DOM"],
     "module": "ESNext",
-    "noEmit": true,
-    "moduleResolution": "Bundler",
-    "target": "ES2022",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "jsx": "preserve",
-    "jsxImportSource": "react",
-    "baseUrl": ".",
+    "moduleResolution": "Node",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "types": ["vite/client", "vite-plugin-pages/client"],
+    "resolveJsonModule": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
   },
-  "exclude": ["dist"]
+  "include": ["src"],
+  "exclude": ["dist", "node_modules"]
 }

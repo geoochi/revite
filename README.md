@@ -4,10 +4,10 @@ A fullstack website build with react, vite, tailwindcss, shadcn, lucide icon, pr
 
 ## Features
 
-- react
-- vite
-- tailwindcss
-- shadcn
+- vue 3
+- vite-ssg 26
+- tailwindcss 4
+- shadcn-vue 2
 - lucide icon
 - prisma
 - sqlite
@@ -19,6 +19,7 @@ A fullstack website build with react, vite, tailwindcss, shadcn, lucide icon, pr
 ```sh
 git clone https://github.com/geoochi/revite.git
 cd revite
+git checkout front-back
 ```
 
 ### 2. install dependencies and set environment variables
@@ -40,7 +41,43 @@ cp .env.example .env
 pnpm prisma db push
 ```
 
-### 3. development
+### 3. set nginx
+
+```nginx
+# frontend backend development server
+map $http_upgrade $connection_upgrade {
+    default upgrade;
+    '' close;
+}
+server {
+    listen 80;
+    listen [::]:80;
+    server_name localhost;
+    # server_name <YOUR_PRODUCTION_DOMAIN>;
+
+    # frontend
+    location / {
+        proxy_pass http://localhost:5173;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $connection_upgrade;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+    }
+
+    # backend
+    location /api {
+        proxy_pass http://localhost:3000;
+        proxy_set_header Host $host;
+        proxy_set_header REMOTE_ADDR $remote_addr;
+    }
+}
+```
+
+### 4. development
 
 client:
 
@@ -54,13 +91,12 @@ server:
 pnpm d
 ```
 
-### 4. production
+### 5. production
 
 client:
 
 ```sh
 pnpm b
-# modify the server url in client/.env
 pnpm p
 ```
 
@@ -68,5 +104,5 @@ server:
 
 ```sh
 pnpm b
-pnpm p-remote
+pnpm p
 ```

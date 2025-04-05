@@ -1,4 +1,4 @@
-import { create } from 'zustand'
+import { defineStore } from 'pinia'
 
 interface User {
   email: string
@@ -10,15 +10,17 @@ interface User {
 interface AuthState {
   user: User | null
   isAuthenticated: boolean
-  setUser: (user: User | null) => void
-  setIsAuthenticated: (isAuthenticated: boolean) => void
 }
 
-const useAuthStore = create<AuthState>((set) => ({
-  user: null,
-  isAuthenticated: false,
-  setUser: (user) => set({ user }),
-  setIsAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
-}))
+export default defineStore('auth', {
+  state: (): AuthState => ({ user: null, isAuthenticated: false }),
 
-export default useAuthStore
+  actions: {
+    setUser(user: User | null) {
+      this.user = user
+    },
+    setIsAuthenticated(isAuthenticated: boolean) {
+      this.isAuthenticated = isAuthenticated
+    },
+  },
+})
