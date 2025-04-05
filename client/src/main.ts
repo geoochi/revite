@@ -7,7 +7,13 @@ export const createApp = ViteSSG(
   App,
   {
     base: import.meta.env.BASE_URL,
-    routes,
+    routes: [
+      ...routes,
+      {
+        path: '/:pathMatch(.*)*',
+        component: () => import('@/pages/404.vue'),
+      },
+    ],
   },
   ({ app, router, initialState }) => {
     const pinia = createPinia()
