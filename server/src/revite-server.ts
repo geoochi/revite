@@ -10,7 +10,7 @@ app.use('/api/auth', authRoutes)
 
 // 404
 app.use((req, res) => {
-  res.sendFile(join(__dirname, '404.html'))
+  res.sendFile(join(__dirname, '../templates/404.html'))
 })
 
 app.listen(3000, () => {
