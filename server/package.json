@@ -4,7 +4,6 @@
     "d": "ts-node-dev src/revite-server.ts",
     "b": "tsc",
     "p": "node dist/revite-server.js",
-    "p-remote": "NODE_ENV=production node dist/revite-server.js",
     "q": "prisma studio"
   },
   "dependencies": {
